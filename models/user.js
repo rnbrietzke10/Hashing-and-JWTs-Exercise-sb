@@ -127,6 +127,14 @@ class User {
       `SELECT id, to_username, body, sent_at, read_at FROM messages WHERE from_username=$1`,
       [username]
     );
+    for (const message of results.rows) {
+      const userInfo = await db.query(
+        `SELECT username, first_name, last_name, phone FROM users WHERE username=$1`,
+        [message.to_username]
+      );
+      message.to_username = userInfo.rows[0];
+    }
+
     return results.rows;
   }
 
@@ -143,6 +151,13 @@ class User {
       `SELECT id, from_username, body, sent_at, read_at FROM messages WHERE to_username=$1`,
       [username]
     );
+    for (const message of results.rows) {
+      const userInfo = await db.query(
+        `SELECT username, first_name, last_name, phone FROM users WHERE username=$1`,
+        [message.from_username]
+      );
+      message.from_username = userInfo.rows[0];
+    }
     return results.rows;
   }
 }

@@ -52,11 +52,11 @@ router.get('/:username', async (req, res, next) => {
  **/
 
 router.get('/:username/to', async (req, res, next) => {
-  const { username } = req.params;
   try {
+    const { username } = req.params;
     if (req.user.username === username) {
       const toMessages = await User.messagesTo(username);
-      return res.json(toMessages);
+      return res.json({ messages: toMessages });
     } else {
       throw new ExpressError('You do not have access to these messages', 403);
     }
@@ -79,7 +79,7 @@ router.get('/:username/from', async (req, res, next) => {
   try {
     if (req.user.username === username) {
       const fromMessages = await User.messagesFrom(username);
-      return res.json({ fromMessages });
+      return res.json({ messages: fromMessages });
     } else {
       throw new ExpressError('You do not have access to these messages', 403);
     }
