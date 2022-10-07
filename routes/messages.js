@@ -48,10 +48,9 @@ router.post('/', async (req, res, next) => {
   const { to_user, body } = req.body;
   const messageInfo = { from_username: username, to_username: to_user, body };
   if (!req.user) {
-    return new ExpressError('You must be logged in to send a message', 401);
+    const e = new ExpressError('You must be logged in to send a message', 401);
+    return next(e);
   }
-
-  // from_username, to_username, body
   const message = await Message.create(messageInfo);
   return res.json({ message });
 });
