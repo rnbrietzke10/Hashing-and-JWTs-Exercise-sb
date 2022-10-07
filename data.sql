@@ -1,5 +1,10 @@
-\c messagely
-DROP TABLE IF EXISTS users;
+-- \c messagely
+
+\c messagely_test
+DELETE FROM messages;
+DELETE FROM users;
+
+DROP TABLE IF EXISTS users cascade;
 DROP TABLE IF EXISTS messages;
 
 CREATE TABLE users (

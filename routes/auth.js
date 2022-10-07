@@ -32,8 +32,10 @@ router.post('/login', async (req, res, next) => {
  *  Make sure to update their last-login!
  */
 router.post('/register', async (req, res, next) => {
-  const user = await User.register(req.body);
-  return res.json({ user });
+  const { username } = await User.register(req.body);
+  let token = jwt.sign({ username }, SECRET_KEY);
+  User.updateLoginTimestamp(username);
+  return res.json({ token });
 });
 
 module.exports = router;
