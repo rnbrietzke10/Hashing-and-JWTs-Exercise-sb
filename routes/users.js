@@ -37,18 +37,11 @@ router.get('/:username', ensureCorrectUser, async (req, res, next) => {
  *
  **/
 
-router.get('/:username/to', async (req, res, next) => {
-  try {
-    const { username } = req.params;
-    if (req.user.username === username) {
-      const toMessages = await User.messagesTo(username);
-      return res.json({ messages: toMessages });
-    } else {
-      throw new ExpressError('You do not have access to these messages', 403);
-    }
-  } catch (e) {
-    next(e);
-  }
+router.get('/:username/to', ensureCorrectUser, async (req, res, next) => {
+  const { username } = req.params;
+
+  const toMessages = await User.messagesTo(username);
+  return res.json({ messages: toMessages });
 });
 
 /** GET /:username/from - get messages from user
@@ -60,18 +53,11 @@ router.get('/:username/to', async (req, res, next) => {
  *                 to_user: {username, first_name, last_name, phone}}, ...]}
  *
  **/
-router.get('/:username/from', async (req, res, next) => {
+router.get('/:username/from', ensureCorrectUser, async (req, res, next) => {
   const { username } = req.params;
-  try {
-    if (req.user.username === username) {
-      const fromMessages = await User.messagesFrom(username);
-      return res.json({ messages: fromMessages });
-    } else {
-      throw new ExpressError('You do not have access to these messages', 403);
-    }
-  } catch (e) {
-    next(e);
-  }
+
+  const fromMessages = await User.messagesFrom(username);
+  return res.json({ messages: fromMessages });
 });
 
 module.exports = router;

@@ -115,13 +115,6 @@ class User {
    *   {username, first_name, last_name, phone}
    */
 
-  /** id SERIAL PRIMARY KEY,
-    from_username text NOT NULL REFERENCES users,
-    to_username text NOT NULL REFERENCES users,
-    body text NOT NULL,
-    sent_at timestamp with time zone NOT NULL,
-    read_at timestamp with time zone */
-
   static async messagesFrom(username) {
     const results = await db.query(
       `SELECT id, to_username, body, sent_at, read_at FROM messages WHERE from_username=$1`,
