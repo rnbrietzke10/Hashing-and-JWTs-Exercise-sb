@@ -2,43 +2,29 @@ const express = require('express');
 const router = new express.Router();
 const ExpressError = require('../expressError');
 const User = require('../models/user');
+
+const { ensureLoggedIn, ensureCorrectUser } = require('../middleware/auth');
+
 /** GET / - get list of users.
  *
  * => {users: [{username, first_name, last_name, phone}, ...]}
  *
  **/
+router.use(ensureLoggedIn);
 router.get('/', async (req, res, next) => {
-  try {
-    if (req.user) {
-      const users = await User.all();
-      return res.json({ users });
-    } else {
-      throw new ExpressError('You must be logged in to see users', 401);
-    }
-  } catch (e) {
-    return next(e);
-  }
+  const users = await User.all();
+  return res.json({ users });
 });
 /** GET /:username - get detail of users.
  *
  * => {user: {username, first_name, last_name, phone, join_at, last_login_at}}
  *
  **/
-router.get('/:username', async (req, res, next) => {
+router.get('/:username', ensureCorrectUser, async (req, res, next) => {
   const { username } = req.params;
-  try {
-    if (req.user.username === username) {
-      const user = await User.get(username);
-      return res.json({ user });
-    } else {
-      throw new ExpressError(
-        'You do not have permission to access this user',
-        403
-      );
-    }
-  } catch (e) {
-    next(e);
-  }
+
+  const user = await User.get(username);
+  return res.json({ user });
 });
 
 /** GET /:username/to - get messages to user
